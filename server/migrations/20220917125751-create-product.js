@@ -26,11 +26,17 @@ module.exports = {
       thumbnail: {
         type: Sequelize.STRING
       },
-      file: {
+      bookFile: {
         type: Sequelize.STRING
       },
       promo: {
         type: Sequelize.STRING
+      },
+      promoprice: {
+        type: Sequelize.INTEGER
+      },
+      discount: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Product.hasOne(models.Promo,{
-        as:'profile',
-        foreignKey:{
-          name: 'idBook'
-        }
-      });
+      // Product.hasOne(models.Promo,{
+      //   as:'profile',
+      //   foreignKey:{
+      //     name: 'idBook'
+      //   }
+      // });
       Product.belongsToMany(models.Category, {
         as: "categories",
         through: {
@@ -40,8 +40,11 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.INTEGER,
     desc: DataTypes.STRING,
     thumbnail: DataTypes.STRING,
-    file: DataTypes.STRING,
-    promo: DataTypes.STRING
+    bookFile: DataTypes.STRING,
+    promo: DataTypes.STRING,
+    promoprice: DataTypes.INTEGER,
+    discount: DataTypes.INTEGER
+    
   }, {
     sequelize,
     modelName: 'Product',
