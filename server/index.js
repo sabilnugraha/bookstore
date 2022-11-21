@@ -12,7 +12,7 @@ const app = express()
 
 const server = http.createServer(app)
 
-const port = 5000
+const port = 7000
 
 app.use(express.json())
 

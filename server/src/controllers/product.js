@@ -1,4 +1,6 @@
 const {Product} = require('../../models');
+const {Category} = require('../../models');
+const {Productcategory} = require('../../models');
 
 exports.storeBook = async (req, res) => {
     try {
@@ -28,9 +30,6 @@ exports.storeBook = async (req, res) => {
 
             });
             
-            console.log("upload book ke cloud", book);
-            
-
             if (!book) {
                 return res.status(400).send({
                     status : "Error",
@@ -90,3 +89,51 @@ exports.getAllBooks = async (req,res) => {
         });
     }
 }
+
+exports.getProduct = async (req, res) => {
+    try {
+      const { id } = req.params;
+      let data = await Product.findOne({
+        where: {
+          id,
+        },
+        include: [
+          {
+            model: Category,
+            as: "categories",
+            through: {
+              model: Productcategory,
+              as: "bridge",
+              attributes: [],
+            },
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+          },
+        ],
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "idUser"],
+        },
+      });
+  
+      data = JSON.parse(JSON.stringify(data));
+  
+      data = {
+        ...data,
+        thumbnail: process.env.PATH_FILE + data.thumbnail,
+        bookFile: process.env.PATH_FILE + data.bookFile
+      };
+  
+      res.send({
+        status: "success...",
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.send({
+        status: "failed",
+        message: "Server Error",
+      });
+    }
+  };
+  
