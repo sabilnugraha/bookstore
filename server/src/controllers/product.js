@@ -4,25 +4,12 @@ const {Productcategory} = require('../../models');
 
 exports.storeBook = async (req, res) => {
     try {
+        let { idCategory } = req.body;
+        idCategory = idCategory.split(",");
         const {body, files} = req;
 
         console.log("body books",body);
         console.log("files books",files);
-    
-
-        // // if (error) {
-        // //     return res.status(400).send({
-        // //         status : "validation error",
-        // //         error : {
-        // //             message : error.details.map((error) => error.message)
-        // //         }
-        // //     })
-        // }
-
-        // if (files.bookFile.length > 0) {
-            // const uploadBook = files.bookFile.map( async (filebook) => {
-            //     // const result = await cloudinary.uploader.upload(filebook.path);//harus path karna menangkap data path saja
-            // })
             const book = await Product.create({
                 ...body,
                 bookFile: files.bookFile[0].filename,
@@ -39,21 +26,39 @@ exports.storeBook = async (req, res) => {
                 })
             }
 
-            // const response = await Product.findOne({
-            //     where : {
-            //         id : Product.id
-            //     },
-            //     attributes : {
-            //         exclude : ["cloudinary_id_bookFile","cloudinary_id","createdAt","updatedAt"]
-            //     }
-            // })
+            const productCategoryData = idCategory.map((item) => {
+                return { idProduct: book.id, idCategory: parseInt(item) };
+              });
+            
 
+            await Productcategory.bulkCreate(productCategoryData);
+            let productData = await Product.findOne({
+                where: {
+                  id: book.id,
+                },
+                include: [
+                  {
+                    model: Category,
+                    as: "categories",
+                    through: {
+                      model: Productcategory,
+                      as: "bridge",
+                      attributes: [],
+                    },
+                    attributes: {
+                      exclude: ["createdAt", "updatedAt"],
+                    },
+                  },
+                ],
+                attributes: {
+                  exclude: ["createdAt", "updatedAt", "idUser"],
+                },
+              });
+              productData = JSON.parse(JSON.stringify(productData));
+          
             return res.send({
-                status : "Success",
-                message : "Book Success Created",
-                // data : {
-                //     book : response
-                // }
+                status : "Success cuyy",
+                
             });
 
     } catch (err) {
